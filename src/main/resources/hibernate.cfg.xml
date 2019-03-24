@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 指定Hibernate配置文件的DTD信息 -->
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<!-- hibernate- configuration是连接配置文件的根元素 -->
+<hibernate-configuration>
+    <session-factory>
+        <!-- 指定连接数据库所用的驱动 -->
+        <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+        <!-- 指定连接数据库的url，hibernate连接的数据库名 -->
+        <property name="connection.url">jdbc:mysql://localhost:3306/test</property>
+        <!-- 指定连接数据库的用户名 -->
+        <property name="connection.username">root</property>
+        <!-- 指定连接数据库的密码 -->
+        <property name="connection.password">123456</property>
+        <!-- 指定连接池里最大连接数 -->
+        <property name="hibernate.c3p0.max_size">20</property>
+        <!-- 指定连接池里最小连接数 -->
+        <property name="hibernate.c3p0.min_size">1</property>
+        <!-- 指定连接池里连接的超时时长 -->
+        <property name="hibernate.c3p0.timeout">5000</property>
+        <!-- 指定连接池里最大缓存多少个Statement对象 -->
+        <property name="hibernate.c3p0.max_statements">100</property>
+        <property name="hibernate.c3p0.idle_test_period">3000</property>
+        <property name="hibernate.c3p0.acquire_increment">2</property>
+        <property name="hibernate.c3p0.validate">true</property>
+        <!-- 指定数据库方言 -->
+        <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
+        <!-- 根据需要自动创建数据表 -->
+        <property name="hbm2ddl.auto">update</property>
+        <!-- 显示Hibernate持久化操作所生成的SQL -->
+        <property name="show_sql">true</property>
+        <!-- 将SQL脚本进行格式化后再输出 -->
+        <property name="hibernate.format_sql">true</property>
+        <!--
+            罗列所有的映射文件，在 hibernate 配置文件中只能一个个对映射文件进行指定，且必须是 classpath下的文件（即 classes）。
+            如果有大量的文件，就需要在 spring 配置文件中使用，sqlsessionFactory 的 MappingDirectoryLocations 的 list/
+            value 节点来指定包路径。
+         -->
+        <mapping resource="mapping/user.hbm.xml"/>
+    </session-factory>
+</hibernate-configuration>
+
+<!--
+## MySQL
+#方言
+hibernate.dialect org.hibernate.dialect.MySQLDialect
+hibernate.dialect org.hibernate.dialect.MySQLInnoDBDialect
+hibernate.dialect org.hibernate.dialect.MySQLMyISAMDialect
+
+#设置当创建sessionfactory时，是否根据映射文件自动建立数据库表。
+create-drop:表示关闭sessionFactory时，将drop刚建的数据库表。该属性可以是update/create-drop/create
+hibernate.hbm2ddl.auto update/create-drop/create/validate
+
+###########################
+### C3P0 Connection Pool C3P0连接池设置
+
+#连接池最大链接数
+hibernate.c3p0.max_size 2
+#连接池最小连接数
+hibernate.c3p0.min_size 2
+#连接池连接的超时时长
+hibernate.c3p0.timeout 5000
+#缓存statements 的数量
+hibernate.c3p0.max_statements 100
+hibernate.c3p0.idle_test_period 3000
+hibernate.c3p0.acquire_increment 2
+hibernate.c3p0.validate true/false
+
+
+############
+### JNDI (java naming directory interface)Java命名目录接口###
+###当无需hibernate自己管理数据源而是直接访问容器管理数据源 使用JNDI
+############
+#指定数据源JNDI名字
+hibernate.connection.datasource dddd
+#文件系统下
+hibernate.jndi.class com.sun.jndi.fscontext.RefFSContextFactory
+hibernate.jndi.url file:/
+
+#网络
+#指定JND InitialContextFactory 的实现类，该属性也是可选的。如果JNDI与Hibernate持久化访问的代码处于同一个应用，无需指定该属性
+hibernate.jndi.class com.ibm.websphere.naming.WsnInitialContextFactory
+#指定JNDI提供者的URL，该属性可选 如果JNDI与Hibernate持久化访问的代码处于同一个应用，无需指定该属性
+hibernate.jndi.url iiop://localhost:900/
+
+#指定链接数据库用户名
+hibernate.connection.username  root
+#指定密码
+hibernate.connection.password  1111
+#指定方言
+hibernate.dialect org.hibernate.dialect.MySQLDialect
+
+#######################
+### Transaction API   事务属性说明###
+#######################
+
+#指定是否在事务结束后自动关闭session
+hibernate.transaction.auto_close_session true/false
+#指定session是否在事务完成后自动将数据刷新到底层数据库
+hibernate.transaction.flush_before_completion true/false
+
+## 指定hibernate所有的事务工厂的类型，该属性必须是TransactionFactory的直接或间接子类
+
+hibernate.transaction.factory_class org.hibernate.transaction.JTATransactionFactory
+hibernate.transaction.factory_class org.hibernate.transaction.JDBCTransactionFactory
+
+## 该属性值是一个JNDI名，hibernate将使用JTATTransactionFactory从应用服务器中取出JTAYserTransaction
+
+jta.UserTransaction jta/usertransaction
+jta.UserTransaction javax.transaction.UserTransaction
+jta.UserTransaction UserTransaction
+
+## 该属性值为一个transactionManagerLookup类名，当使用JVM级别的缓存时，或在JTA环境中使用hilo生成器策略时，需要该类
+
+hibernate.transaction.manager_lookup_class org.hibernate.transaction.JBossTransactionManagerLookup
+hibernate.transaction.manager_lookup_class org.hibernate.transaction.WeblogicTransactionManagerLookup
+hibernate.transaction.manager_lookup_class org.hibernate.transaction.WebSphereTransactionManagerLookup
+hibernate.transaction.manager_lookup_class org.hibernate.transaction.OrionTransactionManagerLookup
+hibernate.transaction.manager_lookup_class org.hibernate.transaction.ResinTransactionManagerLookup
+-->
