@@ -1,5 +1,9 @@
 package com.hyman.entity;
 
+/**
+ * 由 hibernate 管理的 javabean 的规则：
+ * 必须有一个无参的构造方法。该类必须是非 final 的（否则会影响到懒加载）。最好有主键 id。
+ */
 public class User {
 
     private Integer userId;

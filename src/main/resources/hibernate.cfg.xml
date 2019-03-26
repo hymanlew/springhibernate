@@ -3,8 +3,15 @@
 <!DOCTYPE hibernate-configuration PUBLIC
         "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
         "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
-<!-- hibernate- configuration是连接配置文件的根元素 -->
+
+<!-- hibernate- configuration 是连接配置文件的根元素 -->
 <hibernate-configuration>
+
+    <!--
+     一个 <session-factory> 节点代表一个数据库。在 SSH 整合中也可以单独配置 <bean id="sessionFactory"
+     class="org.springframework.orm.hibernate3.LocalSessionFactoryBean" destroy-method="destroy">
+     的 bean 节点，而不需要再使用这个配置文件（即 hibernate.cfg.xml）。
+     -->
     <session-factory>
         <!-- 指定连接数据库所用的驱动 -->
         <property name="connection.driver_class">com.mysql.jdbc.Driver</property>

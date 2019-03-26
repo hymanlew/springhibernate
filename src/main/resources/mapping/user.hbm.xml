@@ -38,15 +38,19 @@
             unsaved-value=""：指定还没有被保存的值（即让 hibernate 去保存这个值），-1，0，any，none，null，undefined。
          -->
         <id name="userId" column="id" type="java.lang.Integer">
-            <!-- <generator>：指定主键由什么生成，推荐使用uuid，assigned指用户手工填入。设定标识符生成器
-            适应代理主键的有：
+            <!-- <generator>：指定主键由什么生成，推荐使用 uuid，assigned指用户手工填入。设定标识符生成器适应代理主键的有：
                 increment：有Hibernat自动以递增的方式生成标识符，每次增量1；
                 identity：由底层数据库生成标识符，前提条件是底层数据库支持自动增长字段类型。（DB2,MYSQL）
                 uuid:用128位的UUID算法生成字符串类型标识符。
+
             适应自然主键：
                 assigned:由java程序负责生成标识符，为了能让java应用程序设置OID,不能把setId（）方法设置成private类型。
                 让应用程序在save()之前为对象分配一个标识符。相当于不指定<generator.../>元素时所采用的默认策略。
                 应当尽量避免自然主键
+
+                hibernate 连接 mysql 时，javabean 对应的表结构，主键的生成策略：
+                native：int 类型（bean 中为 int），且是自增长的。
+                并且如果不指定字段名及类型的话，默认是按照 javabean 属性对应的名字及类型来自动生成。
             -->
             <generator class="increment"/>
         </id>
@@ -66,6 +70,7 @@
             formula="{select。。。。。}"：该属性指定一个SLQ表达式，指定该属性的值将根据表达式类计算，计算属性没有和它对应的数据列。
             formula属性允许包含表达式：sum,average,max函数求值的结果。
             例如：formula="(select avg(p.price) from Product P)"
+            unique="true" not-null="true"
          -->
         <property name="name" column="name" />
         <property name="password" column="password"/>
@@ -86,5 +91,17 @@
         </join>
          -->
 
+        <!--
+            many-to-one 代表多对一（即本表数据的外键值可能是一个），反之代表一对多。
+            fetch 属性有两个取值 join（left join 在本例中为 left join student）和select，默认select。
+
+            select 方式是发送了两条语句，先查找了Card的其他部分，然后根据Card表关联的外键列值到Student表里面去查找对应的
+            Student的信息。
+
+            hibernate 对于多对多级联查询，即两张表 a，b，加一张中间表 ab，从 a 查询 所有的 b 时，就会很麻烦。
+            而 mybatis 就可以直接级联查询 collections。如果是两张表关联的话，则可以 one-to-many，many-to-one
+        -->
+        <!--<many-to-one column="STUDENT_ID" name="student" class="entity.Student" fetch="join" lazy="false">
+        </many-to-one>-->
     </class>
 </hibernate-mapping>

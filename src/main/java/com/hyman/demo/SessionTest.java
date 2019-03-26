@@ -28,8 +28,8 @@ public class SessionTest {
 
             /**
              * 该方法与 get 的区别是，get 方法会立即访问数据库执行。而 load 是懒加载执行的，不会立即访问数据库。即
-             * 只有当下文中有用到 user 对象时它才会执行。如果没有使用 user
-             * 对象，则它不会执行（也没有输出 sql 语句），并且会抛出异常（LazyinitException）。
+             * 只有当下文中有用到 user 对象时它才会执行。如果没有使用 user对象，则它不会执行（也没有输出 sql 语句），
+             * 并且会抛出异常（LazyInitializationException）。
              * 并且 load 方法返回的对象永远都不可能是 null 的，即使传入的主键是错误的。如果是错误的主键，则它会自动生
              * 成一个当前对象的子类（即继承于 User），来返回出来。这也是为什么 User 类不能声明为 final 的原因。
              */
@@ -51,7 +51,7 @@ public class SessionTest {
             e.printStackTrace();
             System.out.println("======== "+e.getMessage());
         }finally {
-            // 关闭连接
+            // 关闭Session，释放资源(不一定是真正的关闭)
             if(session != null){
                 session.close();
             }
@@ -86,25 +86,17 @@ public class SessionTest {
          */
     }
 
-    public static void test3(){
+    public static User test3(){
         Session session = null;
-        Transaction ax = null;
-
+        //Transaction ax = null;
+        User user = null;
         try {
             session = HibernateUtil.getSession();
-            // 手动开启事务
-            ax = session.beginTransaction();
+            //ax = session.beginTransaction();
 
-            User user = new User();
-            user.setName("lili");
-            user.setPassword("123");
-
-            session.saveOrUpdate(user);
-            ax.commit();
+            user = session.load(User.class,1);
+            //ax.commit();
         } catch (Exception e) {
-            if(ax != null){
-                ax.rollback();
-            }
             // 如果此代码是在 DAO 层执行时，通常要把异常抛出给调用层
             e.printStackTrace();
             System.out.println("======== "+e.getMessage());
@@ -114,9 +106,12 @@ public class SessionTest {
                 session.close();
             }
         }
+        return user;
     }
 
     public static void main(String[] args) {
-        test3();
+        User user = test3();
+        // 抛出懒加载异常，LazyInitializationException，并且它跟是否有提交事务是没有关系的。关键在于懒加载。
+        System.out.println(user.getName());
     }
 }
