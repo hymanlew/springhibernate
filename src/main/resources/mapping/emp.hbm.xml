@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="com.hyman.entity.Emploee" table="emp" >
+
+        <id name="id" column="id" type="java.lang.Integer">
+            <generator class="increment"/>
+        </id>
+
+        <property name="name" column="name" />
+
+        <!--
+        hibernate 默认指定的字段，就是其对应对象的主键，所以只会匹配到 depart 的 id。并且如果不指定外键的名称，则它默认
+        会以对象的名字作为表中的字段名（即为 department）。
+        如果是对应的其他表的字段不是主键，则就需要使用 property-ref 指定对应的字段名。
+         -->
+        <!--<many-to-one name="department" column="depart_name" property-ref="name"/>-->
+        <many-to-one name="department" column="depart_id" />
+    </class>
+</hibernate-mapping>

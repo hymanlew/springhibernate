@@ -83,6 +83,17 @@
              </component>
          -->
 
+        <!-- 外键,对应得表为中间表,对应键为c_id -->
+        <!--
+            <set name="teacherSet" table="classes_teacher" >
+                <key>
+                    <column name="c_id"/>
+                </key>
+                 多对多对应Teacher POJO类,该类对应中间表的t_id
+                <many-to-many class="Teacher" column="t_id"/>
+            </set>
+        -->
+
         <!--
             <join>:一个对象映射多个表，该元素必须放在所有<property>之后。
             <join table="tbl_test：子表名">

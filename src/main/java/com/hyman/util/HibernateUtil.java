@@ -7,6 +7,13 @@ import org.hibernate.cfg.Configuration;
 // 定义工具类，不可创建实例，不可被更改
 
 /**
+ * Hibernate 有五个核心接口：
+ * 1，Configuration：负责加载主配置文件信息，同时也加载映射关系文件信息。
+ * 2，SessionFactory：负责创建 session对象。
+ * 3，session：数据库连接会话，负责执行增删改操作。
+ * 4，transaction：负责事务控制。
+ * 5，query：负责执行特殊查询。
+ *
  * HQL（hibernate query language)，即hibernate提供的面向对象的查询语言。查询的是对象以及对象的属性，因此是区分大小写的。
  * HQL是面向对象的查询语言，可以用来查询全部的数据！
  *
