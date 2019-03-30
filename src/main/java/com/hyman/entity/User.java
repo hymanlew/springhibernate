@@ -1,5 +1,7 @@
 package com.hyman.entity;
 
+import java.util.Set;
+
 /**
  * 由 hibernate 管理的 javabean 的规则：
  * 必须有一个无参的构造方法。该类必须是非 final 的（否则会影响到懒加载）。最好有主键 id。
@@ -10,6 +12,7 @@ public class User {
     //private String version;
     private String name;
     private String password;
+    private Set<Role> roles;
 
     public User() {
     }
@@ -44,6 +47,14 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 
     @Override

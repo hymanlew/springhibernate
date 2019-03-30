@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="com.hyman.entity.IdCard" table="emp_card" >
+
+        <!--<id name="id" column="id">-->
+            <!--&lt;!&ndash; 使用外键作为主键，即从 property 对应的类中 getId 来获取主键，此时它既是主键又是外键 &ndash;&gt;-->
+            <!--<generator class="foreign">-->
+                <!--<param name="property">emploee</param>-->
+            <!--</generator>-->
+        <!--</id>-->
+
+        <!--<property name="idententy" column="idententy" not-null="true" unique="true"/>-->
+
+        <!--&lt;!&ndash; constrained 在引用其 id 作为主键时，它就是外键，所以必须要添加约束 &ndash;&gt;-->
+        <!--<one-to-one name="emploee" class="com.hyman.entity.Emploee" constrained="true"/>-->
+
+
+        <!-- 第二种使用纯外键的方式创建 card 表，同样的也要修改 emp 表中的 card 查询方式 -->
+        <id name="id" column="id">
+            <generator class="native" />
+        </id>
+        <property name="idententy" column="idententy" not-null="true" unique="true"/>
+        <many-to-one name="emploee" column="emp_id" not-null="true" unique="true"/>
+    </class>
+</hibernate-mapping>

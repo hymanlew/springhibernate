@@ -58,6 +58,8 @@
         <mapping resource="mapping/user.hbm.xml"/>
         <mapping resource="mapping/depart.hbm.xml"/>
         <mapping resource="mapping/emp.hbm.xml"/>
+        <mapping resource="mapping/card.hbm.xml"/>
+        <mapping resource="mapping/role.hbm.xml"/>
     </session-factory>
 </hibernate-configuration>
 

@@ -4,6 +4,7 @@ public class Emploee {
     private int id;
     private String name;
     private Department department;
+    private IdCard card;
 
     public int getId() {
         return id;
@@ -27,5 +28,13 @@ public class Emploee {
 
     public void setDepartment(Department department) {
         this.department = department;
+    }
+
+    public IdCard getCard() {
+        return card;
+    }
+
+    public void setCard(IdCard card) {
+        this.card = card;
     }
 }

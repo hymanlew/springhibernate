@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="com.hyman.entity.Component" table="component" >
+
+        <id name="id" column="id">
+            <generator class="native" />
+        </id>
+
+         <!--
+         组件映射：
+         把一个实体类中的多个属性打包在一起当作另一个实体类的属性来使用，用来把类的粒度变小。
+         并且 hibernate 会把这个打包的所有属性，都放在主表中，作为一张表中的字段。
+
+         是指关联的属性是个复杂类型的持久化类，但不是实体。即数据库中没有表与该实体对应，但该类的属性又需要持久保存。
+         当组件的属性不能和表中的字段简单对应的时候可以实现 org.hibernate.usertype 包下的 usertype 类，或是
+         CompositeUserType 类。
+         -->
+         <component name="name">
+              <property name="firstName" column="fr_name"></property>
+              <property name="lastName" column="la_name"></property>
+          </component>
+    </class>
+</hibernate-mapping>

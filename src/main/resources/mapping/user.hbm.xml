@@ -76,23 +76,15 @@
         <property name="password" column="password"/>
 
         <!--
-            组件映射：把多个属性打包在一起当一个属性使用，用来把类的粒度变小。
-            <component name="属性，这里指对象">
-                 <property name="name1"></property>
-                 <property name="name2"></property>
-             </component>
-         -->
-
-        <!-- 外键,对应得表为中间表,对应键为c_id -->
-        <!--
-            <set name="teacherSet" table="classes_teacher" >
-                <key>
-                    <column name="c_id"/>
-                </key>
-                 多对多对应Teacher POJO类,该类对应中间表的t_id
-                <many-to-many class="Teacher" column="t_id"/>
-            </set>
+        但是 hibernate 在多对多的操作和性能方面都不太理想，实现很麻烦。所以它的多对多映射使用较少。实际使用中最好转换为一对多的对
+        象模型，hibernate 会自动创建中间关联表，形成两个一对多的关系。
+        set 对应得表即为中间表，查询时是按照 user_id 查到本实例，然后再多对多查询 Role 实例，使用外键 role_id。
         -->
+        <set name="roles" table="user_roles">
+            <key column="user_id"/>
+            <many-to-many class="com.hyman.entity.Role" column="role_id"/>
+        </set>
+
 
         <!--
             <join>:一个对象映射多个表，该元素必须放在所有<property>之后。
@@ -101,18 +93,5 @@
             <property name="name1：对象属性" column="name：子表字段"></property>
         </join>
          -->
-
-        <!--
-            many-to-one 代表多对一（即本表数据的外键值可能是一个），反之代表一对多。
-            fetch 属性有两个取值 join（left join 在本例中为 left join student）和select，默认select。
-
-            select 方式是发送了两条语句，先查找了Card的其他部分，然后根据Card表关联的外键列值到Student表里面去查找对应的
-            Student的信息。
-
-            hibernate 对于多对多级联查询，即两张表 a，b，加一张中间表 ab，从 a 查询 所有的 b 时，就会很麻烦。
-            而 mybatis 就可以直接级联查询 collections。如果是两张表关联的话，则可以 one-to-many，many-to-one
-        -->
-        <!--<many-to-one column="STUDENT_ID" name="student" class="entity.Student" fetch="join" lazy="false">
-        </many-to-one>-->
     </class>
 </hibernate-mapping>

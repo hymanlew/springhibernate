@@ -11,5 +11,11 @@
         </id>
 
         <property name="name" column="name" />
+
+        <set name="emploees">
+            <!-- key 对应的是多方实例的外键，也就是对应本类的主键 id -->
+            <key column="depart_id" />
+            <one-to-many class="com.hyman.entity.Emploee" />
+        </set>
     </class>
 </hibernate-mapping>

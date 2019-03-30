@@ -13,11 +13,22 @@
         <property name="name" column="name" />
 
         <!--
+        many-to-one 代表多对一（即本表数据的外键值可能是一个），反之代表一对多。
+        fetch 属性有两个取值 join（left join 在本例中为 left join student）和select，默认select。
+
+        select 方式是发送了两条语句，先查找了Card的其他部分，然后根据Card表关联的外键列值到Student表里面去查找对应的
+        Student的信息。
+
         hibernate 默认指定的字段，就是其对应对象的主键，所以只会匹配到 depart 的 id。并且如果不指定外键的名称，则它默认
         会以对象的名字作为表中的字段名（即为 department）。
-        如果是对应的其他表的字段不是主键，则就需要使用 property-ref 指定对应的字段名。
+        如果是对应的其他表的字段不是主键，则就需要使用 property-ref 指定对应实体类的属性名，即引用属性来外键连接。
          -->
-        <!--<many-to-one name="department" column="depart_name" property-ref="name"/>-->
-        <many-to-one name="department" column="depart_id" />
+        <!--<many-to-one name="department" column="depart_name" property-ref="name" fetch="join" lazy="false"/>-->
+        <many-to-one name="department" column="depart_id" not-null="true"/>
+
+        <!--<one-to-one name="card" class="com.hyman.entity.IdCard"/>-->
+
+        <!-- 第二种使用纯外键的方式创建 card 表，这里指定要查询的是 card 表中的 emp_id 而不是默认的 card 主键 id -->
+        <one-to-one name="card" class="com.hyman.entity.IdCard" property-ref="emploee"/>
     </class>
 </hibernate-mapping>
