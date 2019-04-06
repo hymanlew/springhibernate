@@ -9,13 +9,66 @@
         <id name="id" column="id" type="java.lang.Integer">
             <generator class="increment"/>
         </id>
-
         <property name="name" column="name" />
 
-        <set name="emploees">
+        <!--
+        hibernate默认对复杂的属性（对象）是不会自动进行 sql 操作的。如果需要它自动去执行，则需要指定其级联操作 cascade。
+        其值有：none，save-update，delete，lock，refresh，evict，replicate，persist，merge，
+        all：对父对象执行什么操作，则对属性对象也执行所有的操作。
+        delete-orphan：当删除父对象时，也同时级联删除它对应的所有属性对象。
+
+        inverse：表示是否放弃维护关联关系（只适用在一对多关系时，在一方的配置。即只让多方去维护对象之间的关联关系，并且 hibernate
+        也规定了多方就不会有 inverse的设置，即不允许多方放弃关联关系的维护）。这样就避免了数据库的重复操作，也提高了性能。因为
+        对于数据库来说只要有一次关联的操作就代表了对象之间的关系。
+        true：放弃维护，不维护。false：保持维护（这个是默认值）。
+
+        但是使用时需要注意，inverse 不维护关联会影响到 cascade 级联关系，即它不会自动去 insert多方的数据。这就需要多方设置级联关系了。
+
+        并且在使用有序集合时就必须设置为 false，因为如果设为不维护关系，而 list集合或数组就无法对数据进行排序，这就会出现异常。
+        -->
+        <set name="emploees" cascade="save-update,delete" inverse="true">
             <!-- key 对应的是多方实例的外键，也就是对应本类的主键 id -->
             <key column="depart_id" />
             <one-to-many class="com.hyman.entity.Emploee" />
+
+            <!-- 如果只是需要获得 emp 的名字，而其他信息不需要，则可以单独获取该字段的值 -->
+            <!--<element type="string" column="name" />-->
+
+            <!-- 如果要获得的 emp 的属性是一个实体类（例如 name 类），则需要使用以下方式来获取该属性的值 -->
+            <!--<composite-element class="com.hyman.entity.Name">-->
+                <!--<property name="firstName" />-->
+                <!--<property name="lastName" />-->
+            <!--</composite-element>-->
         </set>
+
+        <!-- 如果是使用 list 集合来接收多方的数据，则用以下方式。要注意的是 list是有序可重复的，而 set是无序不可重复的 -->
+        <!--<list name="emploees">-->
+            <!--<key column="depart_id" />-->
+            <!--&lt;!&ndash; 单独声明一个字段列（会更新表结构），是专门给 hibernate使用的，用于对 list集合中的数据进行排序。列名可以随便取 &ndash;&gt;-->
+            <!--<list-index column="emp_index" />-->
+            <!--<one-to-many class="com.hyman.entity.Emploee" />-->
+        <!--</list>-->
+
+        <!-- 使用 list 集合接收多方的数据，也可以用 bag 标签（但不能用于 set）。它是数据可重复，不保证顺序的 -->
+        <!--<bag name="emploees">-->
+            <!--<key column="depart_id" />-->
+            <!--<one-to-many class="com.hyman.entity.Emploee" />-->
+        <!--</bag>-->
+
+        <!-- 假设 emp 的名字是不可重复的，并且使用 map<string,emploee> 类型来接收多方的数据 -->
+        <!--<property name="name" column="name" unique="true"/>-->
+        <!--<map name="emploees">-->
+            <!--<key column="depart_id" />-->
+            <!--<map-key type="java.lang.String" column="name"/>-->
+            <!--<one-to-many class="com.hyman.entity.Emploee" />-->
+        <!--</map>-->
+
+        <!-- 使用 array 数组接收多方数据的方式与 list 相同。数据也是有序可重复的 -->
+        <!--<array name="emploees">-->
+            <!--<key column="depart_id" />-->
+            <!--<list-index column="emp_index" />-->
+            <!--<one-to-many class="com.hyman.entity.Emploee" />-->
+        <!--</array>-->
+
     </class>
 </hibernate-mapping>

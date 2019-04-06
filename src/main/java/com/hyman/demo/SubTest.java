@@ -9,50 +9,39 @@ import org.hibernate.Transaction;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Many2Many {
+public class SubTest {
 
-    public static User addUser(){
+    public static Emploee addEmpl(){
         Session session = null;
         Transaction ax = null;
         try {
             session = HibernateUtil.getSession();
             ax = session.beginTransaction();
 
-            User u1 = new User();
-            u1.setName("u1");
-            u1.setPassword("111");
+            Department depart = new Department();
+            depart.setName("综合部门");
 
-            User u2 = new User();
-            u2.setName("u2");
-            u2.setPassword("222");
+            Emploee emploee = new Emploee();
+            emploee.setName("普通员工");
+            emploee.setDepartment(depart);
 
-            Role r1 = new Role();
-            r1.setName("teacher");
+            Technical th = new Technical();
+            th.setName("技术小王");
+            th.setTechnology("java");
+            th.setDepartment(depart);
 
-            Role r2 = new Role();
-            r2.setName("admin");
+            Sale sale = new Sale();
+            sale.setName("销售小张");
+            sale.setSales(1000.0);
+            sale.setDepartment(depart);
 
-            Set<User> users = new HashSet<>();
-            users.add(u2);
-            Set<Role> roles = new HashSet<>();
-            roles.add(r1);
-            roles.add(r2);
-
-            // u1 用户同时拥有两个权限
-            u1.setRoles(roles);
-            // u2 用户只拥有 teacher 权限
-            r1.setUsers(users);
-            // 这里需要注意一下，在 user与 role相互填充数据的同时，不可以重复，否则会抛异常。因为 hibernate 不能对相同的
-            // 操作执行 insert两次，会造成主键冲突。（也因为多对多情况下 inverse 默认也都是 false，即都是需要维护关联关系的）。
-            // 而在一对多的关系中，之所以可以执行，因为它只是进行了外键的更新，而不是进行 insert插入操作。
-
-            session.saveOrUpdate(u1);
-            session.saveOrUpdate(u2);
-            session.saveOrUpdate(r1);
-            session.saveOrUpdate(r2);
+            session.saveOrUpdate(emploee);
+            session.saveOrUpdate(th);
+            session.saveOrUpdate(sale);
             ax.commit();
-            return u1;
+            return emploee;
         } catch (Exception e) {
+
             if(ax != null){
                 ax.rollback();
             }
@@ -66,14 +55,17 @@ public class Many2Many {
         return null;
     }
 
-    public static User getRole(){
+    public static Emploee getEmpl(){
         Session session = null;
         try {
             session = HibernateUtil.getSession();
-            User user = session.get(User.class,1);
-            Hibernate.initialize(user.getRoles());
+            Emploee emploee = session.get(Emploee.class,6);
 
-            return user;
+            // 此时 hibernate的查询就是多态的查询，即它会准确地查出子类对象。但它是使用外连接去查询所以的子类表，所以当子类很
+            // 多时查询性能会很低。所以这就需要在查询时，明确指定子类的类型（子类.class）。
+            System.out.println(emploee.getClass());
+
+            return emploee;
         } catch (Exception e) {
 
             e.printStackTrace();
@@ -115,9 +107,10 @@ public class Many2Many {
     }
 
     public static void main(String[] args) {
-        //addUser();
+        addEmpl();
 
-        System.out.println(getRole().getRoles().size());
+        getEmpl();
+        //System.out.println(getRole().getRoles().size());
 
     }
 }

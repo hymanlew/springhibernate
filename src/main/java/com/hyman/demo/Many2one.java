@@ -8,6 +8,9 @@ import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class Many2one {
 
     public static Department addDepartment(){
@@ -30,13 +33,66 @@ public class Many2one {
             emploee1.setName("小张");
             emploee1.setDepartment(depart);
 
-            // 如果外键有非空约束，就要注意保存的顺序了，否则会抛异常
+            // 如果外键有非空约束，就要注意保存的顺序了，否则会抛异常（当设置为 true维护关联关系，并且没有设置级联操作时才会）。
             session.saveOrUpdate(depart);
             session.saveOrUpdate(emploee);
             session.saveOrUpdate(emploee1);
 
             ax.commit();
             return depart;
+        } catch (Exception e) {
+            if(ax != null){
+                ax.rollback();
+            }
+            e.printStackTrace();
+            System.out.println("======== "+e.getMessage());
+        }finally {
+            // 关闭连接
+            if(session != null){
+                session.close();
+            }
+        }
+        return null;
+    }
+
+    public static Emploee addEmpl(){
+        Session session = null;
+        Transaction ax = null;
+        try {
+            session = HibernateUtil.getSession();
+            ax = session.beginTransaction();
+
+            Emploee emploee = new Emploee();
+            emploee.setName("小王");
+            Emploee emploee1 = new Emploee();
+            emploee1.setName("小张");
+            Set<Emploee> emploees = new HashSet<>();
+            emploees.add(emploee);
+            emploees.add(emploee1);
+
+            Department depart = new Department();
+            depart.setName("技术开发二");
+            // 对象模型，建立两个对象之间的联系
+            depart.setEmploees(emploees);
+
+            /**
+             * 如果外键有非空约束，就要注意保存的顺序了，否则会抛异常。
+             * 因为 hibernate默认对复杂的属性（对象）是不会自动进行 sql 操作的。如果需要它自动去执行，则要在配置文件中指定其
+             * 级联操作，cascade="save-update"。
+             */
+            //session.saveOrUpdate(emploee);
+            //session.saveOrUpdate(emploee1);
+            session.saveOrUpdate(depart);
+            ax.commit();
+
+            /**
+             * 要特别注意，这一行代码会抛 classcast 类型转换异常。虽然我们声明的是 hashset，但 hibernate 在运行时会处理为
+             * PersistentSet 类型（即 hibernate 对 set 的实现类）。所以它就会转换失败。
+             * 因为 hibernate 为了实现懒加载的功能，它对 java所有的集合类都进行了覆写（添加了懒加载的功能）。所以在类中声明
+             * 集合类型时，也只能用接口声明，不能使用其实现类（例如 hashset）。
+             */
+            //HashSet set = (HashSet) depart.getEmploees();
+            return emploee;
         } catch (Exception e) {
             if(ax != null){
                 ax.rollback();

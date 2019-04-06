@@ -4,11 +4,13 @@
         "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-    <class name="com.hyman.entity.Emploee" table="emp" >
+    <!-- 设置默认鉴别器的值为 0，即默认为普通员工，没有任何其他属性 -->
+    <class name="com.hyman.entity.Emploee" table="emp" discriminator-value="0">
 
         <id name="id" column="id" type="java.lang.Integer">
             <generator class="increment"/>
         </id>
+        <!--<discriminator column="type" type="int" />-->
 
         <property name="name" column="name" />
 
@@ -24,11 +26,35 @@
         如果是对应的其他表的字段不是主键，则就需要使用 property-ref 指定对应实体类的属性名，即引用属性来外键连接。
          -->
         <!--<many-to-one name="department" column="depart_name" property-ref="name" fetch="join" lazy="false"/>-->
-        <many-to-one name="department" column="depart_id" not-null="true"/>
+        <many-to-one name="department" column="depart_id" not-null="true" cascade="save-update"/>
 
         <!--<one-to-one name="card" class="com.hyman.entity.IdCard"/>-->
 
         <!-- 第二种使用纯外键的方式创建 card 表，这里指定要查询的是 card 表中的 emp_id 而不是默认的 card 主键 id -->
         <one-to-one name="card" class="com.hyman.entity.IdCard" property-ref="emploee"/>
+
+        <!--
+        hibernate自己有一个鉴别器 discriminator，是专门用于区别子类的类型的，并且只能配置在 id 下面，否则此文件就会无法解析。
+        并且其字段默认的数据类型是 string。
+         -->
+        <!--<subclass name="com.hyman.entity.Technical" discriminator-value="1">-->
+            <!--<property name="technology" />-->
+        <!--</subclass>-->
+        <!--<subclass name="com.hyman.entity.Sale" discriminator-value="2">-->
+            <!--<property name="sales" />-->
+        <!--</subclass>-->
+
+        <!--
+        但是使用鉴别器的方式增加子类的信息，就会造成很多的空字段（因为所有的子类信息都放在了一张表上，并且每个子类的属性都不同）。
+        所以就需要设计另外一种存储的方式了，即每个子类单独生成一张表，然后外键连接主表即可。
+        -->
+        <joined-subclass name="com.hyman.entity.Technical" table="emp_tech">
+            <key column="emp_id" />
+            <property name="technology" />
+        </joined-subclass>
+        <joined-subclass name="com.hyman.entity.Sale" table="emp_sale">
+            <key column="emp_id" />
+            <property name="sales" />
+        </joined-subclass>
     </class>
 </hibernate-mapping>
