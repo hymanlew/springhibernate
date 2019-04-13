@@ -1,5 +1,10 @@
 package com.hyman.entity;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+// 使用 ehcache 缓存
+@Cache(usage =  CacheConcurrencyStrategy.READ_WRITE)
 public class Emploee {
     private int id;
     private String name;

@@ -36,6 +36,19 @@
         <property name="hibernate.c3p0.acquire_increment">2</property>
         <property name="hibernate.c3p0.validate">true</property>
 
+        <!-- 开启 sessionFactory 级别的二级缓存，也可以不配置，因为它默认就是开启的 -->
+        <property name="cache.use_second_level_cache">true</property>
+
+        <!-- 指定二级缓存框架EHCache -->
+        <property name="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</property>
+
+        <!-- 开启查询缓存 -->
+        <property name="hibernate.cache.use_query_cache">true</property>
+
+        <!-- 开启统计信息 -->
+        <property name="generate_statistics">true</property>
+
+
         <!-- 指定数据库方言，必须使用 55，57两个版本（IDB），否则默认为 MISAM 引擎 -->
         <property name="dialect">org.hibernate.dialect.MySQL57Dialect</property>
 

@@ -29,6 +29,9 @@
      -->
     <class name="com.hyman.entity.User" table="user" >
 
+        <!-- 使用 hibernate 的二级缓存，第三方的缓存技术 ehcache 实现 -->
+        <cache usage="read-write" />
+
         <!--
             <id>：定义了该属性到数据库表主键字段的映射。
             type  指定该标识属性的数据类型，该类型可以是Hibernate的内建类型，也可以是java类型，如果是java类型则需要使用全限
@@ -38,19 +41,32 @@
             unsaved-value=""：指定还没有被保存的值（即让 hibernate 去保存这个值），-1，0，any，none，null，undefined。
          -->
         <id name="userId" column="id" type="java.lang.Integer">
-            <!-- <generator>：指定主键由什么生成，推荐使用 uuid，assigned指用户手工填入。设定标识符生成器适应代理主键的有：
-                increment：有Hibernat自动以递增的方式生成标识符，每次增量1；
-                identity：由底层数据库生成标识符，前提条件是底层数据库支持自动增长字段类型。（DB2,MYSQL）
-                uuid:用128位的UUID算法生成字符串类型标识符。
+            <!--
+            <generator>：指定主键由什么生成，推荐使用 uuid，assigned指用户手工填入。设定标识符生成器适应代理主键的有：
 
-            适应自然主键：
-                assigned:由java程序负责生成标识符，为了能让java应用程序设置OID,不能把setId（）方法设置成private类型。
-                让应用程序在save()之前为对象分配一个标识符。相当于不指定<generator.../>元素时所采用的默认策略。
-                应当尽量避免自然主键
+             hibernate 中主键生成策略的区别：
+                identity:
+                由底层数据库生成标识符，是由数据库自己生成的，这个主键必须设置为自增长，前提条件是低层数据库支持自动增长字段类型。（DB2,MYSQL）
 
-                hibernate 连接 mysql 时，javabean 对应的表结构，主键的生成策略：
-                native：int 类型（bean 中为 int），且是自增长的。
+                increment:
+                Hibernat 自动以递增的方式生成标识符，每次增量1。该主键必须为Integer类型。这种方式可能产生的问题是：不能在集群下使用。
+
+                native：
+                由 Hibernate根据使用的数据库自行判断采用 identity、hilo、sequence 其中一种作为主键生成方式。它是 hibernate默认的配置，
+                泛指自增，也就是说除了 Oracle数据库外（oracle下用 native需要用到一个叫 hibernate_sequence的 sequence），大部分数据库
+                你都可以使用默认的 native来代表自增。
                 并且如果不指定字段名及类型的话，默认是按照 javabean 属性对应的名字及类型来自动生成。
+
+                uuid.hex：由 Hibernate基于128位的 UUID算法生成 16进制数值（编码后以长度 32的字符串表示）作为主键。
+
+                uuid.string：与 uuid.hex类似，只是生成的主键未进行编码（长度16），不能应用在 PostgreSQL 数据库中。
+
+                foreign：使用另外一个相关联的对象的标识符作为主键。
+
+                assigned：主键由外部程序负责生成，在 save() 之前指定一个。即不能把 setId（）方法设置成private类型。
+                hilo：通过 hi/lo算法实现的主键生成机制，需要额外的数据库表或字段提供高位值来源。
+
+                seqhilo：与 hilo类似，通过 hi/lo算法实现的主键生成机制，需要数据库中的Sequence，适用于支持 Sequence的数据库，如Oracle。
             -->
             <generator class="increment"/>
         </id>
@@ -85,13 +101,5 @@
             <many-to-many class="com.hyman.entity.Role" column="role_id"/>
         </set>
 
-
-        <!--
-            <join>:一个对象映射多个表，该元素必须放在所有<property>之后。
-            <join table="tbl_test：子表名">
-                <key column="uuid：子表主键"></key>
-            <property name="name1：对象属性" column="name：子表字段"></property>
-        </join>
-         -->
     </class>
 </hibernate-mapping>

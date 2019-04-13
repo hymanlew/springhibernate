@@ -2,6 +2,7 @@ package com.hyman.demo;
 
 import com.hyman.entity.User;
 import com.hyman.util.HibernateUtil;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -88,14 +89,13 @@ public class SessionTest {
 
     public static User test3(){
         Session session = null;
-        //Transaction ax = null;
         User user = null;
         try {
             session = HibernateUtil.getSession();
-            //ax = session.beginTransaction();
-
             user = session.load(User.class,1);
-            //ax.commit();
+            // 初始化对象
+            //Hibernate.initialize(user);
+
         } catch (Exception e) {
             // 如果此代码是在 DAO 层执行时，通常要把异常抛出给调用层
             e.printStackTrace();

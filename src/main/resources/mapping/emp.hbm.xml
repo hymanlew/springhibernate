@@ -45,6 +45,16 @@
         <!--</subclass>-->
 
         <!--
+           或者是使用集成子类并且该子类是另外一张表。
+           <subclass name="com.hyman.entity.Sale" discriminator-value="2">
+               <join table="emp_sale">
+                    <key column="emp_id" />
+                    <property name="sales" />
+               </join>
+           </subclass>
+        -->
+
+        <!--
         但是使用鉴别器的方式增加子类的信息，就会造成很多的空字段（因为所有的子类信息都放在了一张表上，并且每个子类的属性都不同）。
         所以就需要设计另外一种存储的方式了，即每个子类单独生成一张表，然后外键连接主表即可。
         -->
@@ -56,5 +66,21 @@
             <key column="emp_id" />
             <property name="sales" />
         </joined-subclass>
+
+
+        <!--
+        以下这种方式是，对应子类的表数据都是完整的（有id，name，departId，个性信息），即它跟 emp表没有直接关系（没有外键关联），
+        只是隶属的关系（sale，tech 只是 emp员工类型的细分而已）。
+         但是要注意一点，hibernate 默认是按主键来查询数据的，所以这就要求这几张表的主键 id不能重复，否则一个主键就会查出多条数
+         据，hibernate就会抛异常。
+        -->
+        <!--
+        <union-subclass name="com.hyman.entity.Technical" table="emp_tech">
+            <property name="technology" />
+        </union-subclass>
+        <union-subclass name="com.hyman.entity.Sale" table="emp_sale">
+            <property name="sales" />
+        </union-subclass>
+        -->
     </class>
 </hibernate-mapping>

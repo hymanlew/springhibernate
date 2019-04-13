@@ -7,7 +7,7 @@
     <class name="com.hyman.entity.IdCard" table="emp_card" >
 
         <!--<id name="id" column="id">-->
-            <!--&lt;!&ndash; 使用外键作为主键，即从 property 对应的类中 getId 来获取主键，此时它既是主键又是外键 &ndash;&gt;-->
+            <!-- 使用外键作为主键，即从 property 对应的类中 getId 来获取主键，此时它既是主键又是外键 -->
             <!--<generator class="foreign">-->
                 <!--<param name="property">emploee</param>-->
             <!--</generator>-->
@@ -15,7 +15,7 @@
 
         <!--<property name="idententy" column="idententy" not-null="true" unique="true"/>-->
 
-        <!--&lt;!&ndash; constrained 在引用其 id 作为主键时，它就是外键，所以必须要添加约束 &ndash;&gt;-->
+        <!-- constrained 在引用其 id 作为主键时，它就是外键，所以必须要添加约束 -->
         <!--<one-to-one name="emploee" class="com.hyman.entity.Emploee" constrained="true"/>-->
 
 
