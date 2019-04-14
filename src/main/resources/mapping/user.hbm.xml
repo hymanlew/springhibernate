@@ -29,8 +29,8 @@
      -->
     <class name="com.hyman.entity.User" table="user" >
 
-        <!-- 使用 hibernate 的二级缓存，第三方的缓存技术 ehcache 实现 -->
-        <cache usage="read-write" />
+        <!-- 使用 hibernate 的二级缓存，是用第三方的 ehcache 实现。region 是指定缓存的空间，也可以不写默认是 defaultCache -->
+        <cache usage="read-write" region="manual-cache"/>
 
         <!--
             <id>：定义了该属性到数据库表主键字段的映射。
@@ -70,12 +70,6 @@
             -->
             <generator class="increment"/>
         </id>
-
-        <!--
-            <version/>：使用版本控制来处理并发，要开启optimistic-lock="version"和dynamic-update="true"。
-            name="version"：持久化类的属性名，column="version"：指定持有版本号的字段名；
-         -->
-        <!--<version name="version" column="version"/>-->
 
         <!--
             <property>：为类定义一个持久化的javaBean风格的属性。

@@ -31,7 +31,7 @@
         <!--<one-to-one name="card" class="com.hyman.entity.IdCard"/>-->
 
         <!-- 第二种使用纯外键的方式创建 card 表，这里指定要查询的是 card 表中的 emp_id 而不是默认的 card 主键 id -->
-        <one-to-one name="card" class="com.hyman.entity.IdCard" property-ref="emploee"/>
+        <one-to-one name="card" class="com.hyman.entity.IdCard" property-ref="emploee" />
 
         <!--
         hibernate自己有一个鉴别器 discriminator，是专门用于区别子类的类型的，并且只能配置在 id 下面，否则此文件就会无法解析。

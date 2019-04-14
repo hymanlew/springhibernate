@@ -99,7 +99,7 @@ public class OtherSetting {
      1，一级缓存，session 级别的共享，save，update，saveOrUpdate，load，get，list，iterate，lock 方法都是使用一级缓存。但要
         注意一级缓存不控制缓存的数量，所以大批量操作时可能会造成内存溢出。可以用 evict，clear 方法清空缓存。并且当 session 关
         闭后缓存也会被清空，即它的作用范围仅限于在一个 session 中。
-        query 方法不能使用一级缓存
+        query 方法不能使用一级缓存。
      2，二级缓存，sessionFactory 级别的共享，它是直接使用的第三方缓存技术框架来实现的。默认就是打开状态。
 
      3，二级缓存的结构（分四类）：
@@ -119,7 +119,26 @@ public class OtherSetting {
 
      7，请注意：在查询缓存中，ehcache并不缓存结果集中所包含的实体的确切状态；它只缓存这些实体的标识符属性的值、以及各值类型的结
         果。需要将打印sql语句与最近的cache内容相比较，将不同之处修改到cache中，所以查询缓存通常会和二级缓存一起使用。
+
+     8，session 的 save，update，saveOrupdate，load，get，list，iterate方法都会把数据放入二级缓存（前提是主键生成策略不是 native的）。
         并且当用 Hibernate的方式修改表数据 (save,update,delete等等)，这时 EhCache会自动把缓存中关于此表的所有缓存全部删除掉
         (这样能达到同步)。但对于数据经常修改的表来说，可能就失去缓存的意义了(不能减轻数据库压力)；
+        由于 Query，Criteria 命中率低，所以 hibernate默认是关闭的，使用时需要 query.setCacheable(true)，Criteria.setCacheable(true)。
+        sessionFactory.evict(xxx) 来清除二级缓存。
+
+     9，对于一对一，多对一的缓存，只要将关联对象也配置为二级缓存即可。否则只缓存当前实体，而关联对象在查询时还是去访问数据库的。
+        对于一对多则需要在 set 标签中加上 cache 配置即可（或 onetomany 注解上加 cache 注解），并且在关联对象的配置中也要配上
+        二级缓存。否则它只缓存关联对象的 id 集合，不能完全缓存对象数据。
+        对于多对多，则不能缓存关联对象，只能缓存当前对象，即使配置了也无效的。
+
+
+     hibernate 的事务就是调用了 JDBC的事务实现，其本身是没有操作的。一个 sessionFactory对应一个数据库（即是单机单库的事务机制）。
+     1，JTATransaction 是跨数据库的事务，由 JTA 容器实现，使用 JTA的分布式事务需要配置 hibernate参数（见配置文件）。
+     2，使用 TreadLocal 来管理 session实现多个操作共享一个 session，并控制事务边界（事务的开始，提交，及回滚时机）。此时 session
+        不能调用 close，当 commit 或 rollback 时 session 会自动关闭。（OpenSessionInViewFilter 适用于单机单库的 session 管理）。
+
+
+     hibernate 的悲观锁是由数据库实现的，乐观锁是由 version 和 timestamp 来实现。
   */
+
 }

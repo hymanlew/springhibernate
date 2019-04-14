@@ -40,8 +40,7 @@
         <property name="cache.use_second_level_cache">true</property>
 
         <!-- 指定二级缓存框架EHCache -->
-        <property name="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</property>
-
+        <property name="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.internal.EhcacheRegionFactory</property>
         <!-- 开启查询缓存 -->
         <property name="hibernate.cache.use_query_cache">true</property>
 
@@ -61,6 +60,13 @@
 
         <!--事务是否自动提交-->
         <property name="connection.autocommit">false</property>
+        <!-- 将 session 与 request 请求进行绑定，或者手动设置 threadLocal，如果是集成了 spring 则要使用 OpenSessionInViewFilter -->
+        <!--<property name="current_session_context_class">thread</property>-->
+        <!-- 使用 jta 分布式事务来管理 session -->
+        <!--<property name="current_session_context_class">jta</property>-->
+
+        <!-- 此配置是错误的，不可用 -->
+        <!--<property name="hibernate.transaction.factory_class">org.hibernate.resource.transaction.backend.jta.internal.JtaTransactionAdapter</property>-->
 
         <!--
             罗列所有的映射文件，在 hibernate 配置文件中只能一个个对映射文件进行指定，且必须是 classpath下的文件（即 classes）。
@@ -73,6 +79,7 @@
         <mapping resource="mapping/emp.hbm.xml"/>
         <mapping resource="mapping/card.hbm.xml"/>
         <mapping resource="mapping/role.hbm.xml"/>
+        <mapping resource="mapping/component.hbm.xml"/>
     </session-factory>
 </hibernate-configuration>
 

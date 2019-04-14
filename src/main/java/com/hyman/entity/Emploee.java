@@ -3,12 +3,19 @@ package com.hyman.entity;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-// 使用 ehcache 缓存
-@Cache(usage =  CacheConcurrencyStrategy.READ_WRITE)
+@Cache(
+        usage =  CacheConcurrencyStrategy.READ_WRITE,
+        region = "manual-cache",
+        include = "all"
+        )
 public class Emploee {
     private int id;
     private String name;
     private Department department;
+
+    @Cache(
+            usage =  CacheConcurrencyStrategy.READ_WRITE,
+            region = "manual-cache")
     private IdCard card;
 
     public int getId() {

@@ -44,6 +44,7 @@ public class QueryTest {
             Query query = session.createQuery(sql);
             query.setParameter("name","hyman");
 
+
             // 实现分页的功能，从第几条数据开始，要拿到多少条。它是 hibernate封装的方法，所以可用于任何数据库分页。
             // 并且是基于方言的，即连接 mysql 就用于 mysql。连接 oracle 就用于 oracle。
             query.setFirstResult(0);

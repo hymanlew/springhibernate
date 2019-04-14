@@ -6,6 +6,8 @@
 <hibernate-mapping>
     <class name="com.hyman.entity.Department" table="depart" >
 
+        <cache usage="read-write" />
+
         <id name="id" column="id" type="java.lang.Integer">
             <generator class="increment"/>
         </id>
@@ -27,6 +29,7 @@
         并且在使用有序集合时就必须设置为 false，因为如果设为不维护关系，而 list集合或数组就无法对数据进行排序，这就会出现异常。
         -->
         <set name="emploees" cascade="save-update,delete" inverse="true">
+            <cache usage="read-only" />
             <!-- key 对应的是多方实例的外键，也就是对应本类的主键 id -->
             <key column="depart_id" />
             <one-to-many class="com.hyman.entity.Emploee" />

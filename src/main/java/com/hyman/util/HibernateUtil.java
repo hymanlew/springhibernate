@@ -26,6 +26,7 @@ import org.hibernate.cfg.Configuration;
  */
 public final class HibernateUtil {
 
+    private static ThreadLocal<Session> sessionThreadLocal = new ThreadLocal<>();
     private static SessionFactory sessionFactory;
     private HibernateUtil(){
 
@@ -55,4 +56,21 @@ public final class HibernateUtil {
         return sessionFactory.openSession();
     }
 
+    public static Session getThreadLocalSession(){
+        Session session = sessionThreadLocal.get();
+        if(session != null){
+            return session;
+        }
+        session = getSession();
+        sessionThreadLocal.set(session);
+        return session;
+    }
+
+    public static void closeSession(){
+        Session session = sessionThreadLocal.get();
+        if(session != null){
+            session.close();
+            sessionThreadLocal.remove();
+        }
+    }
 }
