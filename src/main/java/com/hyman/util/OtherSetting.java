@@ -139,6 +139,11 @@ public class OtherSetting {
 
 
      hibernate 的悲观锁是由数据库实现的，乐观锁是由 version 和 timestamp 来实现。
+
+
+     hibernate 不适合的场景：
+     不适合 OLAP（on line analytical processing 联机分析处理），以查询分析数据为主的系统。适合 OLTP（on line transaction
+     processing 联机事务处理）。不适合数据量巨大，性能要求苛刻的系统。
   */
 
 }

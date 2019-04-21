@@ -85,6 +85,7 @@ public class SessionTest {
          * 经关闭后），此时的对象就是处于session 的脱管状态。脱管对象状态发生改变，hibernate 不能检测到。
          * 对应的方法：close()，clear()。
          */
+
     }
 
     public static User test3(){

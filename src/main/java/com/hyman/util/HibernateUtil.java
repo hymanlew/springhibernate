@@ -2,6 +2,7 @@ package com.hyman.util;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.StatelessSession;
 import org.hibernate.cfg.Configuration;
 
 // 定义工具类，不可创建实例，不可被更改
@@ -51,6 +52,13 @@ public final class HibernateUtil {
         return sessionFactory;
     }
 
+    /**
+     * Session 是非线程安全的，生命周期较短，代表一个数据库连接。在B/S系统中一般不会超过一个请求，其内部维护一级缓存和数据库连
+     * 接。如果 session 长时间会占用大量内存和数据库连接。
+     * SessionFactory 是线程安全的，一个数据库对应一个 factory，生命周期长，一般在整个系统生命周期内有效。它保存着和数据库连接
+     * 的相关信息（name，password，url）和映射信息，以及 hibernate 运行时要用到的一些信息。
+     * @return
+     */
     public static Session getSession() {
         // 打开一个新的 Session
         return sessionFactory.openSession();
@@ -72,5 +80,30 @@ public final class HibernateUtil {
             session.close();
             sessionThreadLocal.remove();
         }
+    }
+
+    public static void batchSave(){
+        Session session = getSession();
+        for (int i=0; i<100000; i++) {
+            session.save(new Object());
+
+            // 在循环对 session 进行操作时，要注意清空缓存，否则会造成 OOM。并且 clear之前要先 flush对数据库进行最新的更新。
+            // 但要注意 flush 方法其他情况下不需要手动调用，因为它会耗费大量的资源。
+            if (i % 50 == 0) {
+                session.flush();
+                session.clear();
+            }
+        }
+
+        /**
+         * 像这种类似的业务中需要进行大批量的数据操作时，直接使用 session是非常麻烦的（因为它会一直保持 session中的状态，瞬时，
+         * 持久，托管）。
+         * 所以 hibernate提供了一个专门的大批量操作接口，无状态的 session。它不和一级二级缓存交互，也不触发任何事件，监听器拦截
+         * 器，该接口会立即发送数据到数据库，与 JDBC 功能一样。所以该方法也就没有 flush，clear 的必要了。调用的方法与 session 类似。
+         *
+         * 另外 query.executeUpdate() 方法进行批量更新会清空一二级缓存中的数据，也不会对操作对象的关联对象版本号进行同步的实时
+         * 更新，这就容易造成关联不准确或失效。并且也可能会造成级联。
+         */
+        StatelessSession statelessSession = sessionFactory.openStatelessSession();
     }
 }

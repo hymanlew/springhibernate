@@ -22,9 +22,10 @@
         <!-- 指定连接数据库的密码 -->
         <property name="connection.password">123456</property>
 
-        <!-- 指定连接池里最大连接数 -->
-        <property name="connection.pool_size">5</property>
+        <!-- 指定连接池最大连接数，这个是 hibernate 自带的连接池管理，功能小性能差，只能用于测试不能用于生产 -->
+        <!--<property name="connection.pool_size">5</property>-->
 
+        <!-- 生产环境下的连接池设置，使用 C3P0。hibernate3 以后已经不集成 DBCP，如果要使用就必须重写连接池的实现类，然后指定 -->
         <property name="hibernate.c3p0.max_size">20</property>
         <!-- 指定连接池里最小连接数 -->
         <property name="hibernate.c3p0.min_size">1</property>
@@ -58,7 +59,7 @@
         <!-- 将SQL脚本进行格式化后再输出 -->
         <property name="format_sql">true</property>
 
-        <!--事务是否自动提交-->
+        <!-- JDBC 事务是否自动提交-->
         <property name="connection.autocommit">false</property>
         <!-- 将 session 与 request 请求进行绑定，或者手动设置 threadLocal，如果是集成了 spring 则要使用 OpenSessionInViewFilter -->
         <!--<property name="current_session_context_class">thread</property>-->
@@ -80,40 +81,25 @@
         <mapping resource="mapping/card.hbm.xml"/>
         <mapping resource="mapping/role.hbm.xml"/>
         <mapping resource="mapping/component.hbm.xml"/>
+
+        <!-- 配置事件监听器，注意它们执行时，是有先后顺序的 -->
+        <event type="save-update">
+            <listener class="com.hyman.util.SaveListener" />
+            <!-- 必须加上 hibernate 默认的实现监听器 -->
+            <listener class="org.hibernate.event.internal.DefaultSaveOrUpdateEventListener" />
+        </event>
     </session-factory>
 </hibernate-configuration>
 
 <!--
-## MySQL
-#方言
-hibernate.dialect org.hibernate.dialect.MySQLDialect
-hibernate.dialect org.hibernate.dialect.MySQLInnoDBDialect
-hibernate.dialect org.hibernate.dialect.MySQLMyISAMDialect
-
-#设置当创建sessionfactory时，是否根据映射文件自动建立数据库表。
-create-drop:表示关闭sessionFactory时，将drop刚建的数据库表。该属性可以是update/create-drop/create
+#设置当创建 sessionfactory时，是否根据映射文件自动建立数据库表。
+create-drop：表示关闭 sessionFactory时，将drop刚建的数据库表。该属性可以是 update/create-drop/create。
 hibernate.hbm2ddl.auto update/create-drop/create/validate
 
-###########################
-### C3P0 Connection Pool C3P0连接池设置
 
-#连接池最大链接数
-hibernate.c3p0.max_size 2
-#连接池最小连接数
-hibernate.c3p0.min_size 2
-#连接池连接的超时时长
-hibernate.c3p0.timeout 5000
-#缓存statements 的数量
-hibernate.c3p0.max_statements 100
-hibernate.c3p0.idle_test_period 3000
-hibernate.c3p0.acquire_increment 2
-hibernate.c3p0.validate true/false
-
-
-############
 ### JNDI (java naming directory interface)Java命名目录接口###
 ###当无需hibernate自己管理数据源而是直接访问容器管理数据源 使用JNDI
-############
+
 #指定数据源JNDI名字
 hibernate.connection.datasource dddd
 #文件系统下
@@ -133,11 +119,10 @@ hibernate.connection.password  1111
 #指定方言
 hibernate.dialect org.hibernate.dialect.MySQLDialect
 
-#######################
-### Transaction API   事务属性说明###
-#######################
 
-#指定是否在事务结束后自动关闭session
+### Transaction API   事务属性说明###
+
+#指定是否在事务结束后自动关闭 session
 hibernate.transaction.auto_close_session true/false
 #指定session是否在事务完成后自动将数据刷新到底层数据库
 hibernate.transaction.flush_before_completion true/false

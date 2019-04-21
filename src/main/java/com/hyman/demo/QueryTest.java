@@ -1,9 +1,13 @@
 package com.hyman.demo;
 
+import com.hyman.entity.Role;
 import com.hyman.entity.User;
 import com.hyman.util.HibernateUtil;
 import javafx.scene.transform.Rotate;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 
 import javax.persistence.criteria.*;
@@ -70,11 +74,19 @@ public class QueryTest {
         }
     }
 
-    // CriteriaQuery 多条件查询，它比 hql 更面向对象，但是使用不方便。
+    // CriteriaQuery 多条件动态查询，它比 hql 更面向对象，更加灵活（可以实现动态查询）。
     public static void test2(){
         Session session = null;
         try {
             session = HibernateUtil.getSession();
+
+            // 动态的离线查询，该对象的创建不与 session 发生关联，它是可以在任何地方都能创建
+            DetachedCriteria dc = DetachedCriteria.forClass(User.class);
+            dc.add(Restrictions.eq("name","lili"));
+            dc.add(Restrictions.gt("age",20));
+            Criteria c = dc.getExecutableCriteria(session);
+            List ulist = c.list();
+
 
             // 注意导入的包是 import javax.persistence.criteria.CriteriaQuery;
             CriteriaBuilder cBuilder = session.getCriteriaBuilder();
@@ -126,6 +138,15 @@ public class QueryTest {
         }
     }
 
+    // 命名查询
+    public static void test3(){
+        Session session = HibernateUtil.getSession();
+        Query query = session.getNamedQuery("com.hyman.entity.Role.queryByName");
+        Query query2 = session.getNamedQuery("queryByNameOut");
+        query.setParameter("name","%h%");
+        List<Role> list = query.list();
+        System.out.println(list);
+    }
 
     public static void main(String[] args) {
         test1();

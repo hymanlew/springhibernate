@@ -8,6 +8,15 @@
 
         <cache usage="read-write" />
 
+        <!--
+            联合主键设置，可以映射多个属性为为标识符属性。并且该 PO类（持久化类）必须重载 equals，hashcode 方法，来实现联合主
+            键的相等判断。而且也必须要实现 serializable 序列化接口
+        -->
+        <!--<composite-id>-->
+            <!--<key-property name="name" column="name" type="string" />-->
+            <!--<key-many-to-one name="foreightId" column="forei_id" class="com.hyman.entity.Name" />-->
+        <!--</composite-id>-->
+
         <id name="id" column="id">
             <generator class="increment" />
         </id>

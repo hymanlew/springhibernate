@@ -15,5 +15,15 @@
             <key column="role_id"/>
             <many-to-many class="com.hyman.entity.User" column="user_id"/>
         </set>
+
+        <!-- 命名查询-->
+        <query name="queryByName">
+            <![CDATA[from Role where name like :name]]>
+        </query>
     </class>
+
+    <!-- 命名查询，并且名字在全局中必须是唯一的 -->
+    <query name="queryByNameOut">
+        <![CDATA[from Role where name like :name]]>
+    </query>
 </hibernate-mapping>
