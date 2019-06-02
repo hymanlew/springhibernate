@@ -61,7 +61,8 @@
 
         <!-- JDBC 事务是否自动提交-->
         <property name="connection.autocommit">false</property>
-        <!-- 将 session 与 request 请求进行绑定，或者手动设置 threadLocal，如果是集成了 spring 则要使用 OpenSessionInViewFilter -->
+
+        <!-- 将 session 与 request 请求进行绑定（使用 CurrentSession），或者手动设置 threadLocal，如果是集成了 spring 则要使用 OpenSessionInViewFilter -->
         <!--<property name="current_session_context_class">thread</property>-->
         <!-- 使用 jta 分布式事务来管理 session -->
         <!--<property name="current_session_context_class">jta</property>-->

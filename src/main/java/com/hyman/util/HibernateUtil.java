@@ -64,6 +64,14 @@ public final class HibernateUtil {
         return sessionFactory.openSession();
     }
 
+    /**
+     * getThreadLocalSession() 方法和 closeSession() 方法的运行原理就是 sessionFactory.getCurrentSession() 的原理。
+     *
+     * 所以在实际使用 session 的线程安全或是保证整个程序流程中都使用同一个 session 时，可以直接使用 sessionFactory.getCurrentSession()
+     * 方法即可，并且该方法产生的 session 在 commit 或 rollback 之后会自动关闭，而不需要手动关闭。
+     * 注意使用 CurrentSession 需要在 hibernate 配置文件中配置 CurrentSessionContext。
+     * @return
+     */
     public static Session getThreadLocalSession(){
         Session session = sessionThreadLocal.get();
         if(session != null){

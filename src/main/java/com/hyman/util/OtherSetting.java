@@ -136,6 +136,17 @@ public class OtherSetting {
      1，JTATransaction 是跨数据库的事务，由 JTA 容器实现，使用 JTA的分布式事务需要配置 hibernate参数（见配置文件）。
      2，使用 TreadLocal 来管理 session实现多个操作共享一个 session，并控制事务边界（事务的开始，提交，及回滚时机）。此时 session
         不能调用 close，当 commit 或 rollback 时 session 会自动关闭。（OpenSessionInViewFilter 适用于单机单库的 session 管理）。
+     3，当整合 spring 进行事务管理时，就需要在配置文件中配置了，可以百度查找（并且也可以参照 webAll 项目中 mybatis 的事务配置）。
+     4，当整合 spring 进行事务管理时，默认只有发生运行期异常（RuntimeException）时事务才会回滚，而检查型异常是不会回滚的（如
+        IOExcetion，SQLException，DataFormat，ClassNotFound 等等）。
+
+
+     OpenSession 和 getCurrentSession 的区别：
+     1，OpenSession 必须手动关闭，而 CurrentSession 在事务结束后会自动关闭。
+     2，OpenSession 没有和当前线程绑定，CurrentSession 是和当前线程进行了绑定。
+     3，CurrentSession 需要在 hibernate 配置文件中进行配置：
+        如果是本地事务（即 JDBC 事务），则用 <property name="current_session_context_class">thread</property>。
+        如果是全局事务（即分布式 JTA 事务），则用 <property name="current_session_context_class">jta</property>。
 
 
      hibernate 的悲观锁是由数据库实现的，乐观锁是由 version 和 timestamp 来实现。
